@@ -1,6 +1,7 @@
 ﻿@using Todo.Controllers
 @using Todo.Data.Entities
 @using Todo.Services
+@using Todo.Views.TodoItem
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
 
 @{
@@ -10,6 +11,7 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="col-md-6">
+    @Html.DropDownListFor(m => m.SelectedOrderBy, SelectListConvenience.OrderBySelectListItems, "Order By", new { @class = "form-control", @onchange = "FillCity(this.value)" });
 
     <ul class="list-group">
 
@@ -19,7 +21,7 @@
             </a>
         </li>
 
-        @foreach (var item in Model.Items.OrderBy(x=> x.Importance))
+        @foreach (var item in Model.Items)
         {
             string contextualClass;
             switch (item.Importance)
@@ -36,34 +38,42 @@
             }
 
             <li class="list-group-item @contextualClass">
-                
+
                 <div class="row">
 
-                <div class="col-md-8">
-                    <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
+                    <div class="col-md-8">
+                        <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
 
-                        @if (item.IsDone)
-                        {
-                            <s>@item.Title</s>
-                        }
-                        else
-                        {
-                            <text>@item.Title</text>
-                        }
-                    </a>
-                </div>
+                            @if (item.IsDone)
+                            {
+                                <s>@item.Title</s>
+                            }
+                            else
+                            {
+                                <text>@item.Title</text>
+                            }
+                        </a>
+                    </div>
 
-                <div class="col-md-4 text-right">
-                    <small>
-                        @item.ResponsibleParty.UserName
+                    <div class="col-md-4 text-right">
+                        <small>
+                            @item.ResponsibleParty.UserName
 
-                        <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30"/>
+                            <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30" />
 
-                    </small>
-                </div>
+                        </small>
+                    </div>
                 </div>
 
             </li>
         }
     </ul>
 </div>
+
+@section Scripts {
+    <script>
+        function FillCity(val) {
+            window.location.href = "/TodoList/Detail?todoListId=" + @Model.TodoListId+"&orderField="+val;
+  }
+    </script>
+}

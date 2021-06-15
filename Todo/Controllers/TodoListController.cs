@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +37,26 @@ namespace Todo.Controllers
         {
             var todoList = dbContext.SingleTodoList(todoListId);
             var viewmodel = TodoListDetailViewmodelFactory.Create(todoList);
+            return View(viewmodel);
+        }
+
+        [HttpGet]
+        public IActionResult Detail(int todoListId, string orderField="Importance")
+        {
+            var todoList = dbContext.SingleTodoList(todoListId);
+            switch (orderField)
+            {
+                case "Importance":
+                    todoList.Items = todoList.Items.OrderBy(x => x.Importance).ToList();
+                    break;
+                case "Rank":
+                    todoList.Items = todoList.Items.OrderBy(x => x.Rank).ToList();
+                    break;
+                default:
+                    throw new System.Exception("Unsported sorting field");
+            }
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList);
+
             return View(viewmodel);
         }
 

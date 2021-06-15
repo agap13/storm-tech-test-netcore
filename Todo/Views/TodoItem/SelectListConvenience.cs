@@ -19,5 +19,11 @@ namespace Todo.Views.TodoItem
         {
             return dbContext.Users.Select(u => new SelectListItem {Text = u.UserName, Value = u.Id}).ToList();
         }
+
+        public static readonly SelectListItem[] OrderBySelectListItems =
+        {
+            new SelectListItem {Text = "Importance", Value = "Importance"},
+            new SelectListItem {Text = "Rank", Value = "Rank"}
+        };
     }
 }
