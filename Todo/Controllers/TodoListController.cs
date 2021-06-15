@@ -50,10 +50,10 @@ namespace Todo.Controllers
                     todoList.Items = todoList.Items.OrderBy(x => x.Importance).ToList();
                     break;
                 case "Rank":
-                    todoList.Items = todoList.Items.OrderBy(x => x.Rank).ToList();
+                    todoList.Items = todoList.Items.OrderByDescending(x => x.Rank).ToList();
                     break;
                 default:
-                    throw new System.Exception("Unsported sorting field");
+                    throw new System.Exception("Unsupported sorting field");
             }
             var viewmodel = TodoListDetailViewmodelFactory.Create(todoList);
 

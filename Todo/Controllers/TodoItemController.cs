@@ -65,6 +65,23 @@ namespace Todo.Controllers
             return RedirectToListDetail(todoItem.TodoListId);
         }
 
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditRank(RankEditFields fields)
+        {
+            if (!ModelState.IsValid) { return View(fields); }
+
+            var todoItem = dbContext.SingleTodoItem(fields.TodoItemId);
+            todoItem.Rank = fields.Rank;
+            todoItem.TodoItemId = fields.TodoItemId;
+            todoItem.TodoListId = fields.TodoListId;
+
+            dbContext.Update(todoItem);
+            await dbContext.SaveChangesAsync();
+
+            return RedirectToListDetail(todoItem.TodoListId);
+        }
+
         private RedirectToActionResult RedirectToListDetail(int fieldsTodoListId)
         {
             return RedirectToAction("Detail", "TodoList", new {todoListId = fieldsTodoListId});

@@ -29,4 +29,11 @@ namespace Todo.Models.TodoItems
             Rank = rank;
         }
     }
+
+    public class RankEditFields
+    {
+        public int TodoListId { get; set; }
+        public int TodoItemId { get; set; }
+        public int Rank { get; set; }
+    }
 }
