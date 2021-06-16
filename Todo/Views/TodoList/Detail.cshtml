@@ -11,8 +11,12 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="col-md-6">
-    @Html.DropDownListFor(m => m.SelectedOrderBy, SelectListConvenience.OrderBySelectListItems, "Order By", new { @class = "form-control", @onchange = "FillCity(this.value)" });
-
+    @Html.DropDownListFor(m => m.SelectedOrderBy, SelectListConvenience.OrderBySelectListItems, "Order By", new { @class = "form-control", @onchange = "ChangeOrder(this.value)" })
+    <li>
+        <label for="checkboxhide">Hide IsDone?</label>
+        @Html.CheckBoxFor(m => m.IsHide, new { @class = "form-control", @onchange = "HideItems(this.checked)", @id = "checkboxhide" })
+    </li>
+    
     <ul class="list-group">
 
         <li class="list-group-item">
@@ -23,23 +27,23 @@
 
         @foreach (var item in Model.Items)
         {
-            string contextualClass;
-            switch (item.Importance)
-            {
-                case Importance.High:
-                    contextualClass = "list-group-item-danger";
-                    break;
-                case Importance.Low:
-                    contextualClass = "list-group-item-info";
-                    break;
-                default:
-                    contextualClass = "";
-                    break;
-            }
+                string contextualClass;
+                switch (item.Importance)
+                {
+                    case Importance.High:
+                        contextualClass = "list-group-item-danger";
+                        break;
+                    case Importance.Low:
+                        contextualClass = "list-group-item-info";
+                        break;
+                    default:
+                        contextualClass = "";
+                        break;
+                }
 
             <li class="list-group-item @contextualClass">
 
-                <div class="row">
+                <div class="row" >
 
                     <div class="col-md-8">
                         <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
@@ -63,6 +67,7 @@
 
                         </small>
                     </div>
+                  
                 </div>
 
             </li>
@@ -72,8 +77,13 @@
 
 @section Scripts {
     <script>
-        function FillCity(val) {
-            window.location.href = "/TodoList/Detail?todoListId=" + @Model.TodoListId+"&orderField="+val;
-  }
+        function ChangeOrder(val) {
+            window.location.href = "/TodoList/Detail?todoListId=" + @Model.TodoListId+"&orderField=" + val + "&hidden=" + "@Model.IsHide";
+        }
+
     </script>
+    <script>
+        function HideItems(val) {
+            window.location.href = "/TodoList/Detail?todoListId=" + @Model.TodoListId+"&orderField=" + "@Model.SelectedOrderBy" + "&hidden=" + val;
+       }</script>
 }

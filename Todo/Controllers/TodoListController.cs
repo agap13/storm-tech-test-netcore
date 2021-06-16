@@ -33,15 +33,8 @@ namespace Todo.Controllers
             return View(viewmodel);
         }
 
-        public IActionResult Detail(int todoListId)
-        {
-            var todoList = dbContext.SingleTodoList(todoListId);
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList);
-            return View(viewmodel);
-        }
-
         [HttpGet]
-        public IActionResult Detail(int todoListId, string orderField="Importance")
+        public IActionResult Detail(int todoListId, string orderField="Importance", bool hidden=false)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
             switch (orderField)
@@ -55,7 +48,12 @@ namespace Todo.Controllers
                 default:
                     throw new System.Exception("Unsupported sorting field");
             }
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList);
+            if (hidden)
+            {
+                todoList.Items = todoList.Items.Where(x => x.IsDone == false).ToList();
+            }
+
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, orderField, hidden);
 
             return View(viewmodel);
         }
