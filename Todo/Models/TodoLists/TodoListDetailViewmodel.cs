@@ -10,7 +10,6 @@ namespace Todo.Models.TodoLists
         public ICollection<TodoItemSummaryViewmodel> Items { get; }
         public string SelectedOrderBy { get; }
         public bool IsHide { get; }
-
         public TodoListDetailViewmodel(int todoListId, string title, ICollection<TodoItemSummaryViewmodel> items, string selected, bool isHide)
         {
             Items = items;

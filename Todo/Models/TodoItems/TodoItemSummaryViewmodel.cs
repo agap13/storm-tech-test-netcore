@@ -1,4 +1,6 @@
-﻿using Todo.Data.Entities;
+﻿using System.Threading.Tasks;
+using Todo.Data.Entities;
+using Todo.Services;
 
 namespace Todo.Models.TodoItems
 {
@@ -10,8 +12,8 @@ namespace Todo.Models.TodoItems
         public bool IsDone { get; }
         public Importance Importance { get; }
         public int Rank { get; }
-
-        public TodoItemSummaryViewmodel(int todoItemId, string title, bool isDone, UserSummaryViewmodel responsibleParty, Importance importance, int rank)
+        public string GavatarName { get;  set; }
+        public TodoItemSummaryViewmodel(int todoItemId, string title, bool isDone, UserSummaryViewmodel responsibleParty, Importance importance, int rank, string gavatarName)
         {
             TodoItemId = todoItemId;
             Title = title;
@@ -19,6 +21,7 @@ namespace Todo.Models.TodoItems
             ResponsibleParty = responsibleParty;
             Importance = importance;
             Rank = rank;
+            GavatarName = gavatarName;
         }
     }
 }

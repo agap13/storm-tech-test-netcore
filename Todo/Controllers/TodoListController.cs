@@ -18,11 +18,13 @@ namespace Todo.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IUserStore<IdentityUser> userStore;
+        private readonly GravatarApi gravatarApi;
 
-        public TodoListController(ApplicationDbContext dbContext, IUserStore<IdentityUser> userStore)
+        public TodoListController(ApplicationDbContext dbContext, IUserStore<IdentityUser> userStore, GravatarApi gravatarApi)
         {
             this.dbContext = dbContext;
             this.userStore = userStore;
+            this.gravatarApi = gravatarApi;
         }
 
         public IActionResult Index()
@@ -34,7 +36,7 @@ namespace Todo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Detail(int todoListId, string orderField="Importance", bool hidden=false)
+        public async Task<IActionResult> Detail(int todoListId, string orderField="Importance", bool hidden=false)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
             switch (orderField)
@@ -53,12 +55,12 @@ namespace Todo.Controllers
                 todoList.Items = todoList.Items.Where(x => x.IsDone == false).ToList();
             }
 
-            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, orderField, hidden);
+            var gravatarNames = await GetGravatarProfileNames(todoList.Items);
+            var viewmodel = TodoListDetailViewmodelFactory.Create(todoList, orderField, hidden, gravatarNames.ToArray());
 
             return View(viewmodel);
         }
 
-        [HttpGet]
         public IActionResult Create()
         {
             return View(new TodoListFields());
@@ -78,6 +80,17 @@ namespace Todo.Controllers
             await dbContext.SaveChangesAsync();
 
             return RedirectToAction("Create", "TodoItem", new {todoList.TodoListId});
+        }
+
+        private async Task<List<string>> GetGravatarProfileNames(ICollection<TodoItem> items)
+        {
+            var names = new List<string>();
+            foreach (var item in items)
+            {
+                var gravatarName = await gravatarApi.GetProfileName(item.ResponsibleParty.Email);
+                names.Add(gravatarName);
+            }
+            return names;
         }
     }
 }
